@@ -1,0 +1,62 @@
+kernel:
+  image: linuxkit/kernel:4.14.92
+  cmdline: console=tty0 console=ttyS0 console=ttyAMA0 console=ttysclp0
+init:
+  - linuxkit/init:v0.6
+  - linuxkit/runc:v0.6
+  - linuxkit/containerd:v0.6
+  - linuxkit/ca-certificates:v0.6
+  - overneath/serf:0.8
+onboot:
+  - name: rng1
+    image: linuxkit/rngd:v0.6
+    command: ["/sbin/rngd", "-1"]
+  - name: metadata
+    image: linuxkit/metadata:v0.6
+  - name: sysctl
+    image: linuxkit/sysctl:v0.6
+  - name: sysfs
+    image: linuxkit/sysfs:v0.6
+  - name: binfmt
+    image: linuxkit/binfmt:v0.6
+  - name: format
+    image: linuxkit/format:v0.6
+  - name: mount
+    image: linuxkit/mount:v0.6
+    command: ["/usr/bin/mountie", "/var/lib"]
+  - name: dhcpcd
+    image: linuxkit/dhcpcd:v0.6
+    command: ["/sbin/dhcpcd", "--nobackground", "-f", "/dhcpcd.conf", "-1"]
+services:
+  - name: acpid
+    image: linuxkit/acpid:v0.6
+  - name: getty
+    image: linuxkit/getty:v0.6
+    env:
+      - INSECURE=true
+  - name: ntpd
+    image: linuxkit/openntpd:v0.6
+  - name: rngd
+    image: linuxkit/rngd:v0.6
+  - name: serf
+    image: alpine:3.7
+    mounts:
+     - type: tmpfs
+       destination: /tmp
+    binds:
+      - /etc/resolv.conf:/etc/resolv.conf
+      - /run/config/serf:/etc/serf
+      - /usr/local:/usr/local
+      - /var/lib/serf:/var/lib/serf
+    command: [/usr/local/bin/serf, agent, -config-dir=/etc/serf, -tags-file=/var/lib/serf/tags.json]
+    runtime:
+      mkdir:
+        - /run/config/serf
+        - /var/lib/serf
+files:
+  - path: etc/linuxkit.yml
+    metadata: yaml
+trust:
+  org:
+    - library
+    - linuxkit
