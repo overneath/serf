@@ -1,2 +1,3 @@
 #!/bin/sh
-linuxkit run linuxkit/serf
+# linuxkit run -iso -uefi -data-file linuxkit-metadata.json linuxkit/serf
+linuxkit run -squashfs -data-file linuxkit-metadata.json linuxkit/serf

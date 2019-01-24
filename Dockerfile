@@ -19,18 +19,17 @@ RUN gpg --import hashicorp.asc
 RUN gpg --verify serf_${SERF_VERSION}_SHA256SUMS.sig serf_${SERF_VERSION}_SHA256SUMS
 RUN grep ${SERF_PLATFORM}.zip serf_${SERF_VERSION}_SHA256SUMS | sha256sum -cs
 
-WORKDIR /srv/bin
+WORKDIR /opt/local/bin
 
 RUN unzip /tmp/serf_${SERF_VERSION}_${SERF_PLATFORM}.zip
 
-WORKDIR /srv/share/serf
+WORKDIR /opt/local/share/doc/serf
 
 ADD https://raw.githubusercontent.com/hashicorp/serf/v${SERF_VERSION}/README.md .
 ADD https://raw.githubusercontent.com/hashicorp/serf/v${SERF_VERSION}/CHANGELOG.md .
 
-FROM scratch AS serf
-
-COPY --from=verify /srv/ /usr/local/
-
+FROM scratch
+COPY --from=verify /opt/local/ /opt/local/
+ENV PATH /opt/local/bin
 ENTRYPOINT ["serf"]
 CMD ["help"]

@@ -1,6 +1,7 @@
 kernel:
   image: linuxkit/kernel:4.14.92
-  cmdline: console=tty0 console=ttyS0 console=ttyAMA0 console=ttysclp0
+  # cmdline: console=tty0 console=ttyS0 console=ttyAMA0 console=ttysclp0
+  cmdline: console=ttyS0
 init:
   - linuxkit/init:v0.6
   - linuxkit/runc:v0.6
@@ -39,14 +40,19 @@ services:
   - name: rngd
     image: linuxkit/rngd:v0.6
   - name: serf
-    image: alpine:3.7
+    image: library/alpine:3.8
+    capabilities:
+     - all
     mounts:
+     - type: cgroup
+       options: ["rw","nosuid","noexec","nodev","relatime"]
      - type: tmpfs
        destination: /tmp
     binds:
+      - /etc/nsswitch.conf:/etc/nsswitch.conf
       - /etc/resolv.conf:/etc/resolv.conf
+      - /opt/local/bin:/usr/local/bin
       - /run/config/serf:/etc/serf
-      - /usr/local:/usr/local
       - /var/lib/serf:/var/lib/serf
     command: [/usr/local/bin/serf, agent, -config-dir=/etc/serf, -tags-file=/var/lib/serf/tags.json]
     runtime:
@@ -56,6 +62,8 @@ services:
 files:
   - path: etc/linuxkit.yml
     metadata: yaml
+  - path: etc/nsswitch.conf
+    contents: "hosts: files dns"
 trust:
   org:
     - library

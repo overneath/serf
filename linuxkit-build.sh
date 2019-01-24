@@ -1,5 +1,8 @@
 #!/bin/sh
+set -e
 DIR=$(dirname $0)
-mkdir ${DIR}/linuxkit
+mkdir -p ${DIR}/linuxkit
 cd ${DIR}/linuxkit
-linuxkit build -name serf ../linuxkit.yml
+# linuxkit build -format iso-efi -name serf ../linuxkit.yml
+# mv -vf serf-efi.iso serf.iso
+linuxkit build -format kernel+squashfs -name serf ../linuxkit.yml
