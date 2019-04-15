@@ -1,7 +1,6 @@
 kernel:
-  image: linuxkit/kernel:4.14.92
-  # cmdline: console=tty0 console=ttyS0 console=ttyAMA0 console=ttysclp0
-  cmdline: console=ttyS0
+  image: linuxkit/kernel:4.19.34
+  cmdline: console=tty0 console=ttyS0 # console=ttyAMA0 console=ttysclp0
 init:
   - linuxkit/init:v0.6
   - linuxkit/runc:v0.6

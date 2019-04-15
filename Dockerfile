@@ -1,4 +1,4 @@
-ARG ALPINE=alpine:3.7
+ARG ALPINE=alpine:3.9
 
 FROM ${ALPINE} AS verify
 
@@ -6,7 +6,7 @@ RUN apk add --no-cache gnupg
 
 ARG SERF_PGP_FINGERPRINT=91a6e7f85d05c65630bef18951852d87348ffc4c
 ARG SERF_PLATFORM=linux_amd64
-ARG SERF_VERSION=0.8.1
+ARG SERF_VERSION=0.8.2
 
 ADD https://keybase.io/hashicorp/pgp_keys.asc?fingerprint=${SERF_PGP_FINGERPRINT} /tmp/hashicorp.asc
 ADD https://releases.hashicorp.com/serf/${SERF_VERSION}/serf_${SERF_VERSION}_SHA256SUMS /tmp
